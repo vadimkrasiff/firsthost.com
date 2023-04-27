@@ -11,7 +11,7 @@
 <body>
     <header>
         <div class="header">
-            <a href="./"><img class="logo-img" src="/image/logo.svg" /></a>
+            <a href="http://firsthost.com/"><img class="logo-img" src="/image/logo.svg" /></a>
         </div>
     </header>
     <div class="wrapper">

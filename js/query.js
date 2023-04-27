@@ -9,10 +9,11 @@ const getUsers = async () => {
     json.forEach(el => {
       document.querySelector(".users").innerHTML +=
         `<div class="user">
+        <a href="http://firsthost.com/user/${el.id}">
           <div class='photo'><img src='../../image/user.png'/></div>
           <div class='info'><div>${el.FIO}</div>
-          
           </div>
+          </a>
         </div>`;
     });
   } else {
