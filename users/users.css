@@ -1,0 +1,92 @@
+.users_wrap {
+    display: flex;
+
+
+    position: relative;
+    max-width: calc(6*159px);
+    overflow-x:hidden;
+    
+}
+
+.users {
+    right:0;
+    position: relative;
+    display: flex;
+    padding: 1px;
+    transition: 0.4s;
+}
+
+.left_user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 0;
+    top: calc(50% - 25px);
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-color: #333;
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.left_user:hover {
+    opacity: 1;       
+}
+
+
+ .right_user {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    right   : 0;
+    top: calc(50% - 25px);
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-color: #333;
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.right_user:hover {
+    opacity: 1;       
+}
+
+.user {
+    padding: 10px;
+    box-sizing: border-box;
+    min-width: 150px;
+    margin-right: 10px;
+    min-height: 230px;
+    border-radius: 3px;
+    box-shadow: 0 0 3px rgb(0 0 0 / 20%);
+}
+
+.user .photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    width: 100%;
+}
+
+.user .photo img {
+    width: 100%;
+}
+
+.user .info {
+    height: 80px;
+    padding: 5px 0 0 5px;
+    border-top: 1px solid rgb(0 0 0 / 20%);
+}
+
+.user .info div {
+    padding: 5px 0 10px 0;
+}
+
+.user .info .num_phone {
+    height: 30px;
+}
