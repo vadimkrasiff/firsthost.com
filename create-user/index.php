@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title id='title'>Пользователь</title>
+    <title id='title'>Создать пользователя</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/index.css">
     <link rel="stylesheet" href="./user.css">
@@ -22,8 +22,11 @@
                 <a href="/displei-dlya-telefonov/" class="nav"><span class='last'>Дисплеи для телефонов</span> </a>
             </div>
             <div class="content">
-                <div class="user">
-                </div>
+            <form action="" id="loginForm">
+ <p>Your fio: <input type="text" id="fio" name="fio" /></p>
+ <p>Your number phone: <input id="number" type="text" name="num_phone" /></p>
+ <p><input type="submit" /></p>
+</form>s
             </div>
         </div>
         <footer>
@@ -33,9 +36,20 @@
 </body>
 <script src="../js/query.js"></script>
 <script>
-    getUser(<?php echo htmlspecialchars($_GET["id"]) ?>);
-</script>
+    let loginForm = document.getElementById("loginForm");
 
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  let fio = document.getElementById("fio");
+  let number = document.getElementById("number");
+
+ 
+    createUser({'fio':fio.value, 'num_phone': number.value});
+
+  }
+);
+</script>
 </html>
 
 <?php

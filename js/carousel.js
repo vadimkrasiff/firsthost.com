@@ -7,6 +7,7 @@ const setDisplayLeft = () => {
     console.log(el.offsetWidth);
     if (el.offsetWidth < 160 * 7) { document.querySelector(".left_user").style.display = "none" }
     else { document.querySelector(".right_user").style.display = "flex"; }
+    document.querySelector(".right_user").style.display = "none";
    
 }
 const onRightClick = () => {
