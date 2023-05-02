@@ -22,11 +22,13 @@
                 <a href="/displei-dlya-telefonov/" class="nav"><span class='last'>Дисплеи для телефонов</span> </a>
             </div>
             <div class="content">
-            <form action="" id="loginForm">
- <p>Your fio: <input type="text" id="fio" name="fio" /></p>
- <p>Your number phone: <input id="number" type="text" name="num_phone" /></p>
- <p><input type="submit" /></p>
-</form>s
+                <form action="" id="loginForm">
+                    <p>Your login: <input id="login" type="text" name="login" /></p>
+                    <p>Your password: <input id="password" type="password" name="password" /></p>
+                    <p>Your fio: <input type="text" id="fio" name="fio" /></p>
+                    <p>Your number phone: <input id="number" type="text" name="num_phone" /></p>
+                    <p><input type="submit" /></p>
+                </form>
             </div>
         </div>
         <footer>
@@ -43,9 +45,11 @@ loginForm.addEventListener("submit", (e) => {
 
   let fio = document.getElementById("fio");
   let number = document.getElementById("number");
+  let login = document.getElementById("login");
+  let password = document.getElementById("password");
 
  
-    createUser({'fio':fio.value, 'num_phone': number.value});
+    createUser({'fio':fio.value, 'num_phone': number.value, 'login':login.value, 'password': password.value});
 
   }
 );

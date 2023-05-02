@@ -10,6 +10,11 @@ class User
     public $id;
     public $fio;
     public $num_phone;
+    public $login;
+    public $password;
+    public $hash;
+    public $ip;
+
 
     // конструктор для соединения с базой данных
     public function __construct($db)
@@ -32,13 +37,13 @@ function read()
 }
 
 // метод для создания товаров
-function create()
+function register()
 {
     // запрос для вставки (создания) записей
     $query = "INSERT INTO
             " . $this->table_name . "
         SET
-            fio=:fio, num_phone=:num_phone";
+            fio=:fio, num_phone=:num_phone, login=:login, password=:password ";
 
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
@@ -46,16 +51,28 @@ function create()
     // очистка
     $this->fio = htmlspecialchars(strip_tags($this->fio));
     $this->num_phone = htmlspecialchars(strip_tags($this->num_phone));
+    $this->login = htmlspecialchars(strip_tags($this->login));
+    $this->password = htmlspecialchars(strip_tags($this->password));
 
     // привязка значений
     $stmt->bindParam(":fio", $this->fio);
     $stmt->bindParam(":num_phone", $this->num_phone);
+    $stmt->bindParam(":login", $this->login);
+    $stmt->bindParam(":password", $this->password);
 
     // выполняем запрос
     if ($stmt->execute()) {
         return true;
     }
     return false;
+}
+
+function login() {
+
+    $query = "SELECT `id`, `password` FROM users WHERE `login=:login` LIMIT 1";
+
+    $stmt = $this->conn->prepare($query);
+    
 }
 
 // метод для получения конкретного товара по ID
