@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Апр 28 2023 г., 01:36
--- Версия сервера: 5.7.39
--- Версия PHP: 7.2.34
+-- Время создания: Май 03 2023 г., 21:34
+-- Версия сервера: 5.7.39-log
+-- Версия PHP: 8.1.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -63,20 +63,21 @@ CREATE TABLE `orders` (
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `FIO` varchar(30) DEFAULT NULL,
-  `num_phone` varchar(30) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` int(11) UNSIGNED NOT NULL,
+  `login` varchar(30) NOT NULL,
+  `password` varchar(32) NOT NULL,
+  `hash` varchar(32) NOT NULL DEFAULT '',
+  `ip` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `fio` varchar(50) NOT NULL,
+  `num_phone` varchar(50) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=cp1251;
 
 --
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`id`, `FIO`, `num_phone`) VALUES
-(1, 'Красильников В.И', '89504677438'),
-(2, 'Васин Н.Е.', NULL),
-(3, 'Кириков М.С.', '88005053535'),
-(4, 'Сергеев А. С.', NULL);
+INSERT INTO `users` (`id`, `login`, `password`, `hash`, `ip`, `fio`, `num_phone`) VALUES
+(1, 'vadimkrasiff', '929be90338050ed8c8fe6576f956c5e1', '', 0, 'Красильников Вадим Ильич', '233232');
 
 --
 -- Индексы сохранённых таблиц
@@ -121,7 +122,7 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц

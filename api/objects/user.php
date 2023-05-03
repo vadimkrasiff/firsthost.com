@@ -69,10 +69,21 @@ function register()
 
 function login() {
 
-    $query = "SELECT `id`, `password` FROM users WHERE `login=:login` LIMIT 1";
+    $query = "UPDATE users SET hash=:hash, ip=INET_ATON('".$_SERVER['REMOTE_ADDR']."') WHERE id=:id";
 
     $stmt = $this->conn->prepare($query);
-    
+    // очистка
+    $this->id = htmlspecialchars(strip_tags($this->id));
+    $this->hash = htmlspecialchars(strip_tags($this->hash));
+
+    // привязка значений
+    $stmt->bindParam(":id", $this->id);
+    $stmt->bindParam(":hash", $this->hash);
+
+    if ($stmt->execute()) {
+        return true;
+    }
+    return false;
 }
 
 // метод для получения конкретного товара по ID
