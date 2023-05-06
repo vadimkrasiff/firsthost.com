@@ -58,6 +58,21 @@ const createUser= async(data) => {
   let json = await response.json();
   alert(json.message);
   if(response.ok) {
+    // window.location.assign("http://localhost/users");
+  }
+};
+
+const login = async(data) => {
+  console.log(JSON.stringify(data))
+  let response = await fetch(`http://localhost/api/user/login.php`,
+  { method: 'POST',
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body:  JSON.stringify(data)});
+  let json = await response.json();
+  alert(json.message);
+  if(response.ok) {
     window.location.assign("http://localhost/users");
   }
 };

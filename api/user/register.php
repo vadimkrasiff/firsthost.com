@@ -71,7 +71,9 @@ if (
         // сообщим пользователю
         echo json_encode(array("message" => "Невозможно создать пользователя."), JSON_UNESCAPED_UNICODE);
     }}
-    else echo json_encode($err, JSON_UNESCAPED_UNICODE);
+    else {
+        http_response_code(400);
+        echo json_encode(array("message"=> $err), JSON_UNESCAPED_UNICODE);}
 }
 // сообщим пользователю что данные неполные
 else {
