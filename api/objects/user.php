@@ -69,21 +69,41 @@ function register()
 
 function login() {
 
-    $query = "UPDATE users SET hash=:hash, ip=INET_ATON('".$_SERVER['REMOTE_ADDR']."') WHERE id=:id";
+    $query = "UPDATE users SET user_hash=:user_hash, ip=INET_ATON(:ip) WHERE id=:id";
 
     $stmt = $this->conn->prepare($query);
     // очистка
     $this->id = htmlspecialchars(strip_tags($this->id));
     $this->hash = htmlspecialchars(strip_tags($this->hash));
+    $this->ip = htmlspecialchars(strip_tags($this->ip));
 
     // привязка значений
     $stmt->bindParam(":id", $this->id);
-    $stmt->bindParam(":hash", $this->hash);
+    $stmt->bindParam(":user_hash", $this->hash);
+    $stmt->bindParam(":ip", $this->ip);
 
     if ($stmt->execute()) {
         return true;
     }
     return false;
+}
+
+function check() {
+
+    $query = "SELECT *,INET_ATON(ip) AS ip FROM users WHERE id = :id LIMIT 1";
+
+    $stmt = $this->conn->prepare($query);
+
+    $this->id = htmlspecialchars(strip_tags($this->id));
+
+    $stmt->bindParam(":id", $this->id);
+
+    $stmt->execute();
+
+    // получаем извлеченную строку
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $this->ip = $row["ip"];
+    $this->hash = $row["hash"];
 }
 
 // метод для получения конкретного товара по ID

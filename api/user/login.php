@@ -36,13 +36,15 @@ $post = json_decode(file_get_contents("php://input"));
 
 // Вытаскиваем из БД запись, у которой логин равняеться введенному
 $mysqli = mysqli_connect("localhost", "root", "", "data_base");
-$query = mysqli_query($link, "SELECT `id`, `password` FROM users WHERE `login`='" . mysqli_real_escape_string($link, $post->login) . "' LIMIT 1");
+$q = mysqli_query($mysqli, "SELECT `id`, `password` FROM users WHERE `login`='" . mysqli_real_escape_string($link, $post->login) . "' LIMIT 1");
 
-while ($row = mysqli_fetch_assoc($query))
+while ($row = mysqli_fetch_assoc($q))
     if ($row['password'] === md5(md5($post->password))) {
         // Генерируем случайное число и шифруем его
-        $hash = md5(generateCode(10));
-
+        $hash =  md5(generateCode(10));
+        $user->id = $row['id'];
+        $user->hash =  $hash;
+        $user->ip=$_SERVER['REMOTE_ADDR'];
         if ($user->login()) {
             // установим код ответа - 201 создано
             http_response_code(201);
@@ -53,6 +55,7 @@ while ($row = mysqli_fetch_assoc($query))
             // Ставим куки
             setcookie("id", $row['id'], time() + 60 * 60 * 24 * 30, "/");
             setcookie("hash", $hash, time() + 60 * 60 * 24 * 30, "/", null, null, true);
+           
             // Переадресовываем браузер на страницу проверки нашего скрипта
             header("Location: check.php");
             exit(); // httponly !!!
@@ -63,8 +66,9 @@ while ($row = mysqli_fetch_assoc($query))
             http_response_code(503);
 
             // сообщим пользователю
-            echo json_encode(array("message" => "Не удается войти."), JSON_UNESCAPED_UNICODE);
+            echo json_encode(array("message" => "Не удается войти ".$user->id."."), JSON_UNESCAPED_UNICODE);
         }
     } else {
+        http_response_code(400);
         echo json_encode(array("message" => "Вы ввели неправильный логин/пароль"), JSON_UNESCAPED_UNICODE);
     }
