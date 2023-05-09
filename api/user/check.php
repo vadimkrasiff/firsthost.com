@@ -23,8 +23,6 @@ if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
 
     $user->check();
 
-
-
     if (($user->hash !== $_COOKIE['hash']) or ($user->id !== $_COOKIE['id'])
         or (($user->ip !== $_SERVER['REMOTE_ADDR'])  and ($user->ip !== "0"))
     ) {

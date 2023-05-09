@@ -90,7 +90,7 @@ function login() {
 
 function check() {
 
-    $query = "SELECT *,INET_ATON(ip) AS ip FROM users WHERE id = :id LIMIT 1";
+    $query = "SELECT *,INET_NTOA(ip) AS ip FROM users WHERE id =:id LIMIT 1";
 
     $stmt = $this->conn->prepare($query);
 
@@ -103,7 +103,7 @@ function check() {
     // получаем извлеченную строку
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $this->ip = $row["ip"];
-    $this->hash = $row["hash"];
+    $this->hash = $row["user_hash"];
 }
 
 // метод для получения конкретного товара по ID

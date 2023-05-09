@@ -35,19 +35,26 @@
 </body>
 <script src="../js/query.js"></script>
 <script>
-    let loginForm = document.getElementById("loginForm");
+    if (check()) {
+        history.back();
+    } else {
+        let loginForm = document.getElementById("loginForm");
 
-loginForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
 
-  let loginel = document.getElementById("login");
-  let password = document.getElementById("password");
-  console.log("dsasdsd");
-  login({'login':loginel.value, 'password': password.value});
+            let loginel = document.getElementById("login");
+            let password = document.getElementById("password");
+            console.log("dsasdsd");
+            login({
+                'login': loginel.value,
+                'password': password.value
+            });
 
-  }
-);
+        });
+    }
 </script>
+
 </html>
 
 <?php
