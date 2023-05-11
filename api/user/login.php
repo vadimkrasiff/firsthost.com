@@ -57,7 +57,7 @@ while ($row = mysqli_fetch_assoc($q))
             setcookie("hash", $hash, time() + 60 * 60 * 24 * 30, "/", null, null, true);
            
             // Переадресовываем браузер на страницу проверки нашего скрипта
-            header("Location: check.php");
+            // header("Location: check.php");
             exit(); // httponly !!!
         }
         // если не удается войти, сообщим пользователю

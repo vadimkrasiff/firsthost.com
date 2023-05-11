@@ -88,6 +88,20 @@ function login() {
     return false;
 }
 
+function logout() {
+    $query = "UPDATE users SET user_hash='', ip=0 WHERE id=:id";
+
+    $stmt = $this->conn->prepare($query);
+    // очистка
+    $this->id = htmlspecialchars(strip_tags($this->id));
+    $stmt->bindParam(":id", $this->id);
+
+    if ($stmt->execute()) {
+        return true;
+    }
+    return false;
+}
+
 function check() {
 
     $query = "SELECT *,INET_NTOA(ip) AS ip FROM users WHERE id =:id LIMIT 1";

@@ -3,29 +3,34 @@
 const redirect = (path) => {
   window.location.assign(`http://localhost/${path}`);
 }
-const getUsers = async () => {
-  if (check()) {
-    let response = await fetch("http://localhost/api/user/read.php", { method: 'get' });
-    let json = await response.json();
-    if (response.ok) {
+const getUsers = async() => {
+  check().then(async (res) => {
+    if (res) {
 
-      console.log(json);
-      document.querySelector(".users").innerHTML = '';
-      json.records.forEach(el => {
-        document.querySelector(".users").innerHTML +=
-          `<div class="user">
+      let response = await fetch("http://localhost/api/user/read.php", { method: 'get' });
+      let json = await response.json();
+      if (response.ok) {
+
+        console.log(json);
+        document.querySelector(".users").innerHTML = '';
+        json.records.forEach(el => {
+          document.querySelector(".users").innerHTML +=
+            `<div class="user">
         <a href="http://localhost/user/${el.id}">
           <div class='photo'><img src='../../image/user.png'/></div>
           <div class='info'><div>${el.fio}</div>
           </div>
           </a>
         </div>`;
-      });
+        });
+      } else {
+        alert("Ошибка HTTP: " + response.status);
+        document.querySelector(".users").innerHTML = json.message;
+      }
     } else {
-      alert("Ошибка HTTP: " + response.status);
-      document.querySelector(".users").innerHTML = json.message;
+      redirect("login");
     }
-  }
+  });
 
 };
 
@@ -92,11 +97,10 @@ const login = async (data) => {
 const check = async () => {
   let response = await fetch(`http://localhost/api/user/check.php`);
   let json = await response.json();
-  alert(json.message);
+  // alert(json.message);
   if (response.ok) {
-
     return true;
   }
-  redirect('login');
+
   return false
 }; 

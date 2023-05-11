@@ -35,9 +35,9 @@
 </body>
 <script src="../js/query.js"></script>
 <script>
-    if (check()) {
-        history.back();
-    } else {
+    check().then((res) => {
+
+        if(res) history.back()});
         let loginForm = document.getElementById("loginForm");
 
         loginForm.addEventListener("submit", (e) => {
@@ -52,7 +52,6 @@
             });
 
         });
-    }
 </script>
 
 </html>
