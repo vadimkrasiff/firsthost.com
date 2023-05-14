@@ -23,10 +23,11 @@
             </div>
             <div class="content">
                 <form action="" id="loginForm">
-                    <p>Your login: <input id="login" type="text" name="login" /></p>
+                    <!-- <p>Your login: <input id="login" type="text" name="login" /></p>
                     <p>Your password: <input id="password" type="password" name="password" /></p>
                     <p>Your fio: <input type="text" id="fio" name="fio" /></p>
-                    <p>Your number phone: <input id="number" type="text" name="num_phone" /></p>
+                    <p>Your number phone: <input id="number" type="text" name="num_phone" /></p> -->
+                    <input id="photo" name="photo" type="file">
                     <p><input type="submit" /></p>
                 </form>
             </div>
@@ -43,13 +44,14 @@
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  let fio = document.getElementById("fio");
-  let number = document.getElementById("number");
-  let login = document.getElementById("login");
-  let password = document.getElementById("password");
-
+//   let fio = document.getElementById("fio");
+//   let number = document.getElementById("number");
+//   let login = document.getElementById("login");
+//   let password = document.getElementById("password");
+let photo = document.getElementById("photo");
  
-    createUser({'fio':fio.value, 'num_phone': number.value, 'login':login.value, 'password': password.value});
+    // createUser({'fio':fio.value, 'num_phone': number.value, 'login':login.value, 'password': password.value});
+    setPhoto(photo.files[0]);
 
   }
 );

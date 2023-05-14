@@ -77,6 +77,16 @@ const createUser = async (data) => {
   }
 };
 
+
+const setPhoto = async (photo) => {
+  console.log(photo)
+  const data = new FormData();
+  data.append("photo", photo)
+  console.log(data)
+  let response = await fetch(`http://localhost/api/item/uploadPhoto.php`,{  method: 'POST', 
+  body: data})
+}
+
 const login = async (data) => {
   console.log(JSON.stringify(data))
   let response = await fetch(`http://localhost/api/user/login.php`,
