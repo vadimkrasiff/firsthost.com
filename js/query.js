@@ -103,4 +103,19 @@ const check = async () => {
   }
 
   return false
-}; 
+};
+
+const logout = async () => {
+  let response = await fetch(`http://localhost/api/user/logout.php`,
+    {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+  let json = await response.json();
+  alert(json.message);
+
+    window.location.assign(`http://localhost/login`);
+    
+};
