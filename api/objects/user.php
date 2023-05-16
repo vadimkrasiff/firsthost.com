@@ -14,6 +14,7 @@ class User
     public $password;
     public $hash;
     public $ip;
+    public $image;
 
 
     // конструктор для соединения с базой данных
@@ -43,7 +44,7 @@ function register()
     $query = "INSERT INTO
             " . $this->table_name . "
         SET
-            fio=:fio, num_phone=:num_phone, login=:login, password=:password ";
+            fio=:fio, num_phone=:num_phone, login=:login, password=:password, image=:image ";
 
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
@@ -53,12 +54,14 @@ function register()
     $this->num_phone = htmlspecialchars(strip_tags($this->num_phone));
     $this->login = htmlspecialchars(strip_tags($this->login));
     $this->password = htmlspecialchars(strip_tags($this->password));
+    $this->image = htmlspecialchars(strip_tags($this->image));
 
     // привязка значений
     $stmt->bindParam(":fio", $this->fio);
     $stmt->bindParam(":num_phone", $this->num_phone);
     $stmt->bindParam(":login", $this->login);
     $stmt->bindParam(":password", $this->password);
+    $stmt->bindParam(":image", $this->image);
 
     // выполняем запрос
     if ($stmt->execute()) {
