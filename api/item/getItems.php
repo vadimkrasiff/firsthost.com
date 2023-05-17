@@ -1,7 +1,7 @@
 <?php
 
 // необходимые HTTP-заголовки
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Content-Type: application/json; charset=utf-8");
 
 // подключение базы данных и файл, содержащий объекты
@@ -23,7 +23,9 @@ $num = $stmt->rowCount();
 if ($num > 0) {
     // массив товаров
     $products_arr = array();
-    $products_arr["records"] = array();
+    // $products_arr["response"] =1;
+    // $products_arr["items"] = array();
+   
 
     // получаем содержимое нашей таблицы
     // fetch() быстрее, чем fetchAll()
@@ -38,14 +40,14 @@ if ($num > 0) {
             "category_id" => $category_id,
             "category_name" => $category_name
         );
-        array_push($products_arr["records"], $product_item);
+        array_push($products_arr, $product_item);
     }
 
     // устанавливаем код ответа - 200 OK
     http_response_code(200);
 
     // выводим данные о товаре в формате JSON
-    echo json_encode($products_arr);
+    echo json_encode(array("response" => 1, 'items' => $products_arr ), JSON_UNESCAPED_UNICODE);
 }
 
 // "товары не найдены" будет здесь

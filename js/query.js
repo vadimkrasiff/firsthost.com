@@ -7,18 +7,18 @@ const getUsers = async() => {
   check().then(async (res) => {
     if (res) {
 
-      let response = await fetch("http://localhost/api/user/read.php", { method: 'get' });
+      let response = await fetch("http://localhost/api/item/getItems.php", { method: 'get' });
       let json = await response.json();
       if (response.ok) {
 
         console.log(json);
         document.querySelector(".users").innerHTML = '';
-        json.records.forEach(el => {
+        json.items.forEach(el => {
           document.querySelector(".users").innerHTML +=
             `<div class="user">
         <a href="http://localhost/user/${el.id}">
           <div class='photo'><img src='../../image/user.png'/></div>
-          <div class='info'><div>${el.fio}</div>
+          <div class='info'><div>${el.name}</div>
           </div>
           </a>
         </div>`;

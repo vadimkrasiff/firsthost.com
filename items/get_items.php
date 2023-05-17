@@ -16,6 +16,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $items[]=$row;
 }
 
- $items = json_encode($users,JSON_UNESCAPED_UNICODE );
+ $items = json_encode($items,JSON_UNESCAPED_UNICODE );
  echo $items;
 ?>

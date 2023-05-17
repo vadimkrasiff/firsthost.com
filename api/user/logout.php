@@ -1,6 +1,7 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Content-Type: application/json; charset=UTF-8");
+header('Access-Control-Allow-Credentials: true');
 
 include_once "../config/database.php";
 
@@ -18,9 +19,10 @@ if($user->id != ''){
         http_response_code(201);
 
         // сообщим пользователю
-        echo json_encode(array("message" => "Вы вышли."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array("response" => 1), JSON_UNESCAPED_UNICODE);
         setcookie("id", "", time() - 3600*24*30*12, "/");
         setcookie("hash", "", time() - 3600*24*30*12, "/",null,null,true);
+        setcookie("rol", "", time() - 3600*24*30*12, "/");
     }
     // если не удается создать товар, сообщим пользователю
     else {
@@ -28,12 +30,12 @@ if($user->id != ''){
         http_response_code(503);
 
         // сообщим пользователю
-        echo json_encode(array("message" => "Невозможно выйти."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array("response" => 0,"message" => "Some error"), JSON_UNESCAPED_UNICODE);
     };
 } else {
     http_response_code(503);
 
         // сообщим пользователю
-        echo json_encode(array("message" => "Вход не совершен."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array("response" => 0,"message" => "Some error"), JSON_UNESCAPED_UNICODE);
 }
 

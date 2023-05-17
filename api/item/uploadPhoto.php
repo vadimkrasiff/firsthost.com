@@ -36,18 +36,21 @@ function can_upload($file){
 	// формируем уникальное имя картинки: дата
     $name ='IMG' . $date->format('Y-m-d_H-i-s_A') . "." . $mime;
 
+
     copy($file['tmp_name'], $_SERVER['DOCUMENT_ROOT']. '/image/items/' . $name);
 	// move_uploaded_file($file['tmp_name'], 'http://localhost/image/items/' );
-  return  $name;
+  return  "http://localhost/image/items/" . $name;
   }
 
 
   if(isset($_FILES['photo'])) {
     // проверяем, можно ли загружать изображение
     $check = can_upload($_FILES['photo']);
-  
+
     if($check === true){
       // загружаем изображение на сервер
+      $im = imagecreatefrompng($_FILES['photo']['tmp_name']);
+      $image = imagecrop($im,['x' => 0, 'y' => 0, 'width' => 400, 'height' => 400] );
       $result = make_upload($_FILES['photo']);
       http_response_code(201);
       echo json_encode(array("response" => $result), JSON_UNESCAPED_UNICODE);
