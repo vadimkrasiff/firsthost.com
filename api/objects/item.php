@@ -13,6 +13,11 @@ class Item {
     public $created;
     public $modified;
     public $query_updata;
+    public $count;
+    public $category_name;
+    public $city;
+    public $street;
+    public $num_house;
 
 
     public function __construct($db) {
@@ -24,20 +29,43 @@ function get_items()
 {
     // выбираем все записи
     $query = "SELECT
-        c.name as category_name, p.id, p.name, p.description, p.cost, p.category_id, p.created
+        c.name as category_name, p.id, p.name, p.cost, p.created
     FROM
         " . $this->table_name . " p
         LEFT JOIN
             categories c
                 ON p.category_id = c.id
     ORDER BY
-        p.created DESC";
+    p.id";
 
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
 
     // выполняем запрос
     $stmt->execute();
+    return $stmt;
+}
+
+function getItem()
+{
+    // запрос для чтения одной записи (товара)
+    $query = "SELECT s.id, i.name, i.description, i.cost, s.count, i.image, c.name as category_name, p.city,p.street, p.num_house
+                FROM storage s 
+                JOIN items i ON s.item_id = i.id 
+                JOIN pharmacy p ON s.pharmacy_id = p.id 
+                JOIN categories c ON i.category_id = c.id 
+                WHERE i.id= ? ORDER BY s.id ;";
+            
+    // подготовка запроса
+    $stmt = $this->conn->prepare($query);
+
+    // привязываем id товара, который будет получен
+    $stmt->bindParam(1, $this->id);
+
+    // выполняем запрос
+    $stmt->execute();
+
+    // получаем извлеченную строку
     return $stmt;
 }
 

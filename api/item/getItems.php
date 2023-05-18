@@ -35,9 +35,7 @@ if ($num > 0) {
         $product_item = array(
             "id" => $id,
             "name" => $name,
-            "description" => html_entity_decode($description),
             "cost" => $cost,
-            "category_id" => $category_id,
             "category_name" => $category_name
         );
         array_push($products_arr, $product_item);

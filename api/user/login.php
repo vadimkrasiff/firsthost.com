@@ -79,5 +79,6 @@ while ($row = mysqli_fetch_assoc($q)){
         http_response_code(400);
         echo json_encode(array('response' => 0, "message" => "Вы ввели неправильный логин/пароль"), JSON_UNESCAPED_UNICODE);
     }
+    exit;
 } if (!$row) { http_response_code(400);
 echo json_encode(array('response' => 0, "message" => "Вы ввели неправильный логин/пароль"), JSON_UNESCAPED_UNICODE);}
