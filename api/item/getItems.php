@@ -36,6 +36,7 @@ if ($num > 0) {
             "id" => $id,
             "name" => $name,
             "cost" => $cost,
+            "category_id" => $category_id,
             "category_name" => $category_name
         );
         array_push($products_arr, $product_item);

@@ -29,7 +29,7 @@ function get_items()
 {
     // выбираем все записи
     $query = "SELECT
-        c.name as category_name, p.id, p.name, p.cost, p.created
+        p.category_id, c.name as category_name, p.id, p.name, p.cost, p.created
     FROM
         " . $this->table_name . " p
         LEFT JOIN
@@ -49,7 +49,7 @@ function get_items()
 function getItem()
 {
     // запрос для чтения одной записи (товара)
-    $query = "SELECT s.id, i.name, i.description, i.cost, s.count, i.image, c.name as category_name, p.city,p.street, p.num_house
+    $query = "SELECT s.id, i.name, i.description, i.cost, s.count, i.image, i.category_id, c.name as category_name, p.city,p.street, p.num_house
                 FROM storage s 
                 JOIN items i ON s.item_id = i.id 
                 JOIN pharmacy p ON s.pharmacy_id = p.id 

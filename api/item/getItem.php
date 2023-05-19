@@ -31,9 +31,13 @@ if ($num > 0) {
 
     $products_arr = array();
 
+
+
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // извлекаем строку
         extract($row);
+       
+
         $product_item = array(
             "id" => $id,
             "name" => $name,
@@ -41,6 +45,7 @@ if ($num > 0) {
             "cost" => $cost,
             "count" => $count,
             "image" => $image,
+            "category_id" => $category_id,
             "category_name" => $category_name,
             "address" => "г. " . $city . ", ул. " . $street . ", " .$num_house
         );
@@ -55,7 +60,7 @@ if ($num > 0) {
 } else {
 
     // сообщим пользователю, что такой товар не существует
-    echo json_encode(array("response" => 0,"message" => "Пользователь не существует"), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array("response" => 0,"message" => "Продукт не существует"), JSON_UNESCAPED_UNICODE);
 }} else {
-    echo json_encode(array("response" => 0,"message" => "Не указан id пользователя"), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array("response" => 0,"message" => "Не указан номер продукт"), JSON_UNESCAPED_UNICODE);
 }
