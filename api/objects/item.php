@@ -18,6 +18,7 @@ class Item {
     public $city;
     public $street;
     public $num_house;
+    public $manufacturer;
 
 
     public function __construct($db) {
@@ -29,7 +30,7 @@ function get_items()
 {
     // выбираем все записи
     $query = "SELECT
-        p.category_id, c.name as category_name, p.id, p.name, p.cost, p.created
+        p.category_id, c.name as category_name, p.id, p.name, p.cost, p.created, p.image
     FROM
         " . $this->table_name . " p
         LEFT JOIN
@@ -48,8 +49,30 @@ function get_items()
 
 function getItem()
 {
+    // выбираем все записи
+    $query = "SELECT
+    p.category_id, c.name as category_name, p.id, p.name, p.cost, p.created, p.image, p.manufacturer
+FROM
+    " . $this->table_name . " p
+    LEFT JOIN
+        categories c
+            ON p.category_id = c.id
+    WHERE p.id=? 
+ORDER BY
+p.id LIMIT 1;";
+
+    // подготовка запроса
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(1, $this->id);
+    // выполняем запрос
+    $stmt->execute();
+    return $stmt;
+}
+
+function getProduct()
+{
     // запрос для чтения одной записи (товара)
-    $query = "SELECT s.id, i.name, i.description, i.cost, s.count, i.image, i.category_id, c.name as category_name, p.city,p.street, p.num_house
+    $query = "SELECT s.id, i.name, i.description, i.cost, s.count, i.image, i.category_id, i.manufacturer, c.name as category_name, p.city,p.street, p.num_house
                 FROM storage s 
                 JOIN items i ON s.item_id = i.id 
                 JOIN pharmacy p ON s.pharmacy_id = p.id 

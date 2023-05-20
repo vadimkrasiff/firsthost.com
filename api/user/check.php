@@ -33,7 +33,7 @@ if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
         echo json_encode(array('response' => 0 ,"message" => "Not logged in"), JSON_UNESCAPED_UNICODE);
     } else {
         http_response_code(201);
-        echo json_encode(array( 'response' => 1, 'data' => array('id'=> $user->id, 'login'=> $user->login)), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array( 'response' => 1, 'data' => array('id'=> $user->id, 'login'=> $user->login, 'rol'=> $user->rol)), JSON_UNESCAPED_UNICODE);
     }
 } else {
     // http_response_code(503);

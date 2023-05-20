@@ -37,7 +37,8 @@ if ($num > 0) {
             "name" => $name,
             "cost" => $cost,
             "category_id" => $category_id,
-            "category_name" => $category_name
+            "category_name" => $category_name,
+            "image" => $image
         );
         array_push($products_arr, $product_item);
     }

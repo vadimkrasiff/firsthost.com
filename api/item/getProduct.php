@@ -10,7 +10,6 @@ header("Content-Type: application/json");
 // подключение файла для соединения с базой и файл с объектом
 include_once "../config/database.php";
 include_once "../objects/item.php";
-include_once "../objects/user.php";
 
 // получаем соединение с базой данных
 $database = new Database();
@@ -24,14 +23,8 @@ if(isset($_GET["id"])) {
 
 $item->id = $_GET["id"];
 
-$user = new User($db);
-
-$ceck = $user->check();
-
-if($user->rol== 'admin'){
-
 // получим детали товара
-$stmt = $item->getItem();
+$stmt = $item->getProduct();
 $num = $stmt->rowCount();
 
 if ($num > 0) {
@@ -40,7 +33,7 @@ if ($num > 0) {
 
 
 
-    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         // извлекаем строку
         extract($row);
        
@@ -50,23 +43,25 @@ if ($num > 0) {
             "name" => $name,
             "description" => html_entity_decode($description),
             "cost" => $cost,
+            "count" => $count,
             "image" => $image,
             "category_id" => $category_id,
             "category_name" => $category_name,
-            "manufacturer" => $manufacturer
+            "manufacturer" => $manufacturer,
+            "address" => "г. " . $city . ", ул. " . $street . ", " .$num_house
         );
+        array_push($products_arr, $product_item);
     }
 
     // устанавливаем код ответа - 200 OK
     http_response_code(200);
 
     // выводим данные о товаре в формате JSON
-    echo json_encode(array("response" => 1, 'data' => $product_item ), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array("response" => 1, 'items' => $products_arr ), JSON_UNESCAPED_UNICODE);
 } else {
 
     // сообщим пользователю, что такой товар не существует
     echo json_encode(array("response" => 0,"message" => "Продукт не существует"), JSON_UNESCAPED_UNICODE);
-}} else echo json_encode(array("response" => 0,"message" => "У Вас нет доступа"), JSON_UNESCAPED_UNICODE);
-} else {
+}} else {
     echo json_encode(array("response" => 0,"message" => "Не указан номер продукт"), JSON_UNESCAPED_UNICODE);
 }

@@ -59,9 +59,9 @@ while ($row = mysqli_fetch_assoc($q)){
             // Ставим куки
             setcookie("id", $row['id'], time() + 60 * 60 * 24 * 30, "/");
             setcookie("hash", $hash, time() + 60 * 60 * 24 * 30, "/");
-            if($user->rol == 'admin') {
-                setcookie("rol", $user->rol, time() + 60 * 60 * 24 * 30, "/");
-            }
+            // if($user->rol == 'admin') {
+            //     setcookie("rol", $user->rol, time() + 60 * 60 * 24 * 30, "/");
+            // }
            
             // Переадресовываем браузер на страницу проверки нашего скрипта
             // header("Location: check.php");

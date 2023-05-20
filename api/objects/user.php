@@ -121,6 +121,7 @@ function check() {
     $this->login = $row['login'];
     $this->ip = $row["ip"];
     $this->hash = $row["user_hash"];
+    $this->rol = $row["rol"];
 }
 
 function checkAdmin() {
