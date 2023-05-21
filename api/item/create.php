@@ -1,7 +1,7 @@
 <?php
 
 // необходимые HTTP-заголовки
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
@@ -22,15 +22,17 @@ $data = json_decode(file_get_contents("php://input"));
 // убеждаемся, что данные не пусты
 if (
     !empty($data->name) &&
-    !empty($data->price) &&
+    !empty($data->cost) &&
     !empty($data->description) &&
-    !empty($data->category_id)
+    !empty($data->category_id) &&
+    !empty($data->manufacturer)
 ) {
     // устанавливаем значения свойств товара
     $item->name = $data->name;
     $item->cost = $data->cost;
     $item->description = $data->description;
     $item->category_id = $data->category_id;
+    $item->manufacturer = $data->manufacturer;
     
     $item->created = date("Y-m-d H:i:s");
 
@@ -38,11 +40,28 @@ if (
 
     // создание товара
     if ($item->create()) {
+        $item_id = null;
+        $pharmacy_id = null;
+        $link = mysqli_connect("localhost", "root", "", "data_base");
+        $get_item = mysqli_query($link, "(SELECT `id` FROM items ORDER BY 1 DESC LIMIT 1 )
+        UNION
+        (SELECT id FROM pharmacy ORDER BY 1 DESC LIMIT 1)");
+        if ($row = mysqli_fetch_assoc($get_item)) {
+            $item_id = $row['id']; 
+        }
+        if ($row = mysqli_fetch_assoc($get_item)) {
+            $pharmacy_id = $row['id']; 
+        }
+        for($id=1; $id<=$pharmacy_id; $id++){
+            $create_item =  mysqli_query($link, 'INSERT INTO `storage` (`id`, `item_id`, `pharmacy_id`, `count`) VALUES (NULL, '.$item_id.', '.$id.', 100)');
+        };
+        
+
         // установим код ответа - 201 создано
         http_response_code(201);
 
         // сообщим пользователюы
-        echo json_encode(array("message" => "Товар был создан."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('response'=>1,"message" => "Товар был создан."), JSON_UNESCAPED_UNICODE);
     }
     // если не удается создать товар, сообщим пользователю
     else {
@@ -50,7 +69,7 @@ if (
         http_response_code(503);
 
         // сообщим пользователю
-        echo json_encode(array("message" => "Невозможно создать товар."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('response'=>0,"message" => "Невозможно создать товар."), JSON_UNESCAPED_UNICODE);
     }
 }
 // сообщим пользователю что данные неполные
@@ -59,5 +78,5 @@ else {
     http_response_code(400);
 
     // сообщим пользователю
-    echo json_encode(array("message" => "Не полные данные."), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array('response'=>0,"message" => "Не полные данные."), JSON_UNESCAPED_UNICODE);
 }

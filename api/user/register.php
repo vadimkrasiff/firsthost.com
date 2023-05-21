@@ -1,7 +1,7 @@
 <?php
 
 // необходимые HTTP-заголовки
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
@@ -61,7 +61,7 @@ if (
         http_response_code(201);
 
         // сообщим пользователю
-        echo json_encode(array("message" => "Пользователь создан."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('response'=> 1,"message" => "Пользователь создан."), JSON_UNESCAPED_UNICODE);
     }
     // если не удается создать товар, сообщим пользователю
     else {
@@ -69,11 +69,11 @@ if (
         http_response_code(503);
 
         // сообщим пользователю
-        echo json_encode(array("message" => "Невозможно создать пользователя."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('response'=> 0,"message" => "Невозможно создать пользователя."), JSON_UNESCAPED_UNICODE);
     }}
     else {
         http_response_code(400);
-        echo json_encode(array("message"=> $err), JSON_UNESCAPED_UNICODE);}
+        echo json_encode(array('response'=> 0,"message"=> $err), JSON_UNESCAPED_UNICODE);}
 }
 // сообщим пользователю что данные неполные
 else {
@@ -81,5 +81,5 @@ else {
     http_response_code(400);
 
     // сообщим пользователю
-    echo json_encode(array("message" => "Невозможно создать пользователя. Данные неполные."), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array('response'=> 0,"message" => "Невозможно создать пользователя. Данные неполные."), JSON_UNESCAPED_UNICODE);
 }
