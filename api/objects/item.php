@@ -169,4 +169,25 @@ function update()
     return false;
 }
 
+function delete()
+{
+    // запрос для удаления записи (товара)
+    $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+
+    // подготовка запроса
+    $stmt = $this->conn->prepare($query);
+
+    // очистка
+    $this->id = htmlspecialchars(strip_tags($this->id));
+
+    // привязываем id записи для удаления
+    $stmt->bindParam(1, $this->id);
+
+    // выполняем запрос
+    if ($stmt->execute()) {
+        return true;
+    }
+    return false;
+}
+
 }
