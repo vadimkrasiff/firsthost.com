@@ -134,9 +134,10 @@ function update()
             " . $this->table_name . "
         SET
             name = :name,
-            price = :price,
+            cost = :cost,
             description = :description,
-            category_id = :category_id
+            category_id = :category_id,
+            manufacturer = :manufacturer
             
         WHERE
             id = :id";
@@ -149,14 +150,16 @@ function update()
     $this->cost = htmlspecialchars(strip_tags($this->cost));
     $this->description = htmlspecialchars(strip_tags($this->description));
     $this->category_id = htmlspecialchars(strip_tags($this->category_id));
+    $this->manufacturer = htmlspecialchars(strip_tags($this->manufacturer));
     $this->id = htmlspecialchars(strip_tags($this->id));
     
 
     // привязываем значения
     $stmt->bindParam(":name", $this->name);
-    $stmt->bindParam(":price", $this->cost);
+    $stmt->bindParam(":cost", $this->cost);
     $stmt->bindParam(":description", $this->description);
     $stmt->bindParam(":category_id", $this->category_id);
+    $stmt->bindParam(":manufacturer", $this->manufacturer);
     $stmt->bindParam(":id", $this->id);
 
     // выполняем запрос

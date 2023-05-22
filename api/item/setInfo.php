@@ -37,6 +37,7 @@ $item->id = $data->id;
 $item->name = $data->name;
 $item->cost = $data->cost;
 $item->description = $data->description;
+$item->manufacturer = $data->manufacturer;
 $item->category_id = $data->category_id;
 // $item->image = $data->image;
 
