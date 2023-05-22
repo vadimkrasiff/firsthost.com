@@ -35,10 +35,12 @@ if ($num > 0) {
         $product_item = array(
             "id" => $id,
             "name" => $name,
+            "description"=>$description,
             "cost" => $cost,
             "category_id" => $category_id,
             "category_name" => $category_name,
-            "image" => $image
+            "image" => $image,
+            "manufacturer"=> $manufacturer
         );
         array_push($products_arr, $product_item);
     }

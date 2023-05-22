@@ -74,9 +74,6 @@ if (
 }
 // сообщим пользователю что данные неполные
 else {
-    // установим код ответа - 400 неверный запрос
-    http_response_code(400);
-
     // сообщим пользователю
     echo json_encode(array('response'=>0,"message" => "Не полные данные."), JSON_UNESCAPED_UNICODE);
 }

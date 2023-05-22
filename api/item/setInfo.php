@@ -22,6 +22,14 @@ $item = new Item($db);
 // $data = json_decode(file_get_contents("php://input"));
 $data = json_decode(file_get_contents("php://input"));
 
+
+if(!empty($data->id) &&
+!empty($data->name) &&
+!empty($data->cost) &&
+!empty($data->description) &&
+!empty($data->category_id) &&
+!empty($data->manufacturer)){
+
 // установим id свойства товара для редактирования
 $item->id = $data->id;
 
@@ -30,7 +38,8 @@ $item->name = $data->name;
 $item->cost = $data->cost;
 $item->description = $data->description;
 $item->category_id = $data->category_id;
-$item->image = $data->image;
+// $item->image = $data->image;
+
 
 // обновление товара
 if ($item->update()) {
@@ -38,13 +47,16 @@ if ($item->update()) {
     http_response_code(200);
 
     // сообщим пользователю
-    echo json_encode(array("message" => "Товар был обновлён"), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array('response'=>1,"message" => "Товар был обновлён"), JSON_UNESCAPED_UNICODE);
 }
 // если не удается обновить товар, сообщим пользователю
 else {
-    // код ответа - 503 Сервис не доступен
-    http_response_code(503);
 
     // сообщение пользователю
-    echo json_encode(array("message" => "Невозможно обновить товар"), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array('response'=>0,"message" => "Невозможно обновить товар"), JSON_UNESCAPED_UNICODE);
+}}
+// сообщим пользователю что данные неполные
+else {
+    // сообщим пользователю
+    echo json_encode(array('response'=>0,"message" => "Не полные данные."), JSON_UNESCAPED_UNICODE);
 }

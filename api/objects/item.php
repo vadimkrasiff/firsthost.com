@@ -30,7 +30,7 @@ function get_items()
 {
     // выбираем все записи
     $query = "SELECT
-        p.category_id, c.name as category_name, p.id, p.name, p.cost, p.created, p.image
+        p.category_id, c.name as category_name, p.id, p.name, p.description, p.cost, p.manufacturer, p.created, p.image
     FROM
         " . $this->table_name . " p
         LEFT JOIN
@@ -136,8 +136,8 @@ function update()
             name = :name,
             price = :price,
             description = :description,
-            category_id = :category_id,
-            image=:image
+            category_id = :category_id
+            
         WHERE
             id = :id";
 
@@ -149,7 +149,6 @@ function update()
     $this->cost = htmlspecialchars(strip_tags($this->cost));
     $this->description = htmlspecialchars(strip_tags($this->description));
     $this->category_id = htmlspecialchars(strip_tags($this->category_id));
-    $this->image = htmlspecialchars(strip_tags($this->image));
     $this->id = htmlspecialchars(strip_tags($this->id));
     
 
@@ -158,7 +157,6 @@ function update()
     $stmt->bindParam(":price", $this->cost);
     $stmt->bindParam(":description", $this->description);
     $stmt->bindParam(":category_id", $this->category_id);
-    $stmt->bindParam(":image", $this->image);
     $stmt->bindParam(":id", $this->id);
 
     // выполняем запрос
