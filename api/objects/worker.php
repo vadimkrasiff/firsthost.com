@@ -1,10 +1,10 @@
 <?php
 
-class User
+class Worker
 {
     // подключение к базе данных и таблице "products"
     private $conn;
-    private $table_name = "users";
+    private $table_name = "worker";
 
     // свойства объекта
     public $id;
@@ -16,6 +16,10 @@ class User
     public $ip;
     public $image;
     public $rol;
+    public $city;
+    public $street;
+    public $num_house;
+    public $pharmacy_id;
 
 
     // конструктор для соединения с базой данных
@@ -28,7 +32,7 @@ class User
 function read()
 {
     // выбираем все записи
-    $query = "SELECT * FROM " . $this->table_name;
+    $query = "SELECT w.*, p.city, p.street, p.num_house FROM " . $this->table_name ." w join pharmacy p on w.pharmacy_id=p.id ";
 
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
@@ -45,7 +49,7 @@ function register()
     $query = "INSERT INTO
             " . $this->table_name . "
         SET
-            fio=:fio, num_phone=:num_phone, login=:login, password=:password";
+            fio=:fio, num_phone=:num_phone, login=:login, password=:password, pharmacy_id=:pharmacy_id";
 
     // подготовка запроса
     $stmt = $this->conn->prepare($query);
@@ -55,12 +59,14 @@ function register()
     $this->num_phone = htmlspecialchars(strip_tags($this->num_phone));
     $this->login = htmlspecialchars(strip_tags($this->login));
     $this->password = htmlspecialchars(strip_tags($this->password));
+    $stmt->bindParam(":pharmacy_id", $this->pharmacy_id);
 
     // привязка значений
     $stmt->bindParam(":fio", $this->fio);
     $stmt->bindParam(":num_phone", $this->num_phone);
     $stmt->bindParam(":login", $this->login);
     $stmt->bindParam(":password", $this->password);
+    $stmt->bindParam(":pharmacy_id", $this->pharmacy_id);
 
     // выполняем запрос
     if ($stmt->execute()) {
@@ -71,7 +77,7 @@ function register()
 
 function login() {
 
-    $query = "UPDATE users SET user_hash=:user_hash, ip=INET_ATON(:ip) WHERE id=:id";
+    $query = "UPDATE worker SET user_hash=:user_hash, ip=INET_ATON(:ip) WHERE id=:id";
 
     $stmt = $this->conn->prepare($query);
     // очистка
@@ -91,7 +97,7 @@ function login() {
 }
 
 function logout() {
-    $query = "UPDATE users SET user_hash='', ip=0 WHERE id=:id";
+    $query = "UPDATE worker SET user_hash='', ip=0 WHERE id=:id";
 
     $stmt = $this->conn->prepare($query);
     // очистка
@@ -106,7 +112,9 @@ function logout() {
 
 function check() {
 
-    $query = "SELECT *,INET_NTOA(ip) AS ip FROM users WHERE id =:id LIMIT 1";
+    $query = "SELECT w.*, INET_NTOA(w.ip) AS ip, p.city, p.street, p.num_house FROM `worker` w join
+    pharmacy p on w.pharmacy_id=p.id
+    WHERE w.id=:id limit 1";
 
     $stmt = $this->conn->prepare($query);
 
@@ -122,11 +130,14 @@ function check() {
     $this->ip = $row["ip"];
     $this->hash = $row["user_hash"];
     $this->rol = $row["rol"];
+    $this->city = $row["city"];
+    $this->street = $row["street"];
+    $this->num_house = $row["num_house"];
 }
 
 function checkAdmin() {
 
-    $query = "SELECT rol FROM users WHERE id =:id LIMIT 1";
+    $query = "SELECT rol FROM worker WHERE id =:id LIMIT 1";
 
     $stmt = $this->conn->prepare($query);
 

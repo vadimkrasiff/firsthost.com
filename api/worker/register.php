@@ -11,10 +11,10 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once "../config/database.php";
 
 // создание объекта товара
-include_once "../objects/user.php";
+include_once "../objects/worker.php";
 $database = new Database();
 $db = $database->getConnection();
-$user = new User($db);
+$worker = new Worker($db);
 $link=mysqli_connect("localhost", "root", "", "data_base");
 
 // получаем отправленные данные
@@ -26,6 +26,7 @@ if (
     !empty($data->num_phone)
     && !empty($data->login)
     && !empty($data->password)
+    && !empty($data->pharmacy_id)
 ) {
 
     $err = [];
@@ -41,27 +42,28 @@ if (
         $err[] = "Логин должен быть не меньше 3-х символов и не больше 30";
     }
 
-    $query = mysqli_query($link, "SELECT `id` FROM `users` WHERE `login` ='".mysqli_real_escape_string($link, $data->login)."'");
+    $query = mysqli_query($link, "SELECT `id` FROM `worker` WHERE `login` ='".mysqli_real_escape_string($link, $data->login)."'");
     if(mysqli_num_rows($query) > 0)
     {
-        $err[] = "Пользователь с таким логином уже существует в базе данных";
+        $err[] = "Работник с таким логином уже существует в базе данных";
     }
 
     if(count($err) == 0)
     { // устанавливаем значения свойств товара
-    $user->fio = $data->fio;
-    $user->num_phone = $data->num_phone;
-    $user->login = $data->login;
-    $user->password =  md5(md5(trim($data->password)));
+    $worker->fio = $data->fio;
+    $worker->num_phone = $data->num_phone;
+    $worker->login = $data->login;
+    $worker->pharmacy_id = $data->pharmacy_id;
+    $worker->password =  md5(md5(trim($data->password)));
 
 
     // создание товара
-    if ($user->register()) {
+    if ($worker->register()) {
         // установим код ответа - 201 создано
         http_response_code(201);
 
         // сообщим пользователю
-        echo json_encode(array('response'=> 1,"message" => "Пользователь создан."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('response'=> 1,"message" => "Работник создан."), JSON_UNESCAPED_UNICODE);
     }
     // если не удается создать товар, сообщим пользователю
     else {
@@ -69,7 +71,7 @@ if (
         http_response_code(503);
 
         // сообщим пользователю
-        echo json_encode(array('response'=> 0,"message" => "Невозможно создать пользователя."), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('response'=> 0,"message" => "Невозможно создать работника."), JSON_UNESCAPED_UNICODE);
     }}
     else {
         http_response_code(400);
@@ -81,5 +83,5 @@ else {
     http_response_code(400);
 
     // сообщим пользователю
-    echo json_encode(array('response'=> 0,"message" => "Невозможно создать пользователя. Данные неполные."), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array('response'=> 0,"message" => "Невозможно создать работника. Данные неполные."), JSON_UNESCAPED_UNICODE);
 }

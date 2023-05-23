@@ -9,23 +9,23 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 // подключаем файл для работы с БД и объектом Product
 include_once "../config/database.php";
-include_once "../objects/user.php";
+include_once "../objects/worker.php";
 
 // получаем соединение с базой данных
 $database = new Database();
 $db = $database->getConnection();
 
 // подготовка объекта
-$product = new User($db);
+$product = new Worker($db);
 
 // получаем id товара для редактирования
 $data = json_decode(file_get_contents("php://input"));
 
 // установим id свойства товара для редактирования
-$user->id = $data->id;
+$worker->id = $data->id;
 
 // установим значения свойств товара
-$user->fio = $data->fio;
+$worker->fio = $data->fio;
 $product->num_phone = $data->num_phone;
 
 // обновление товара
@@ -34,13 +34,11 @@ if ($product->update()) {
     http_response_code(200);
 
     // сообщим пользователю
-    echo json_encode(array("message" => "Пользователь был обновлён"), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array('response' => 1, "message" => "Работник был обновлён"), JSON_UNESCAPED_UNICODE);
 }
 // если не удается обновить товар, сообщим пользователю
 else {
-    // код ответа - 503 Сервис не доступен
-    http_response_code(503);
 
     // сообщение пользователю
-    echo json_encode(array("message" => "Невозможно обновить данные пользователя"), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array('response' => 0, "message" => "Невозможно обновить данные работника"), JSON_UNESCAPED_UNICODE);
 }

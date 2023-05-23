@@ -11,10 +11,10 @@ header('Access-Control-Allow-Credentials: true');
 include_once "../config/database.php";
 
 // создание объекта товара
-include_once "../objects/user.php";
+include_once "../objects/worker.php";
 $database = new Database();
 $db = $database->getConnection();
-$user = new User($db);
+$worker = new Worker($db);
 $link = mysqli_connect("localhost", "root", "", "data_base");
 
 // Функция для генерации случайной строки
@@ -36,7 +36,7 @@ $post = json_decode(file_get_contents("php://input"));
 
 // Вытаскиваем из БД запись, у которой логин равняеться введенному
 $mysqli = mysqli_connect("localhost", "root", "", "data_base");
-$q = mysqli_query($mysqli, "SELECT `id`, `password`, `rol` FROM users WHERE `login`='" . mysqli_real_escape_string($link, $post->login) . "' LIMIT 1");
+$q = mysqli_query($mysqli, "SELECT `id`, `password`, `rol` FROM worker WHERE `login`='" . mysqli_real_escape_string($link, $post->login) . "' LIMIT 1");
 
 
 
@@ -45,11 +45,11 @@ while ($row = mysqli_fetch_assoc($q)){
     if ($row['password'] === md5(md5($post->password) )) {
         // Генерируем случайное число и шифруем его
         $hash =  md5(generateCode(10));
-        $user->id = $row['id'];
-        $user->hash =  $hash;
-        $user->rol = $row['rol'];
-        $user->ip=$_SERVER['REMOTE_ADDR'];
-        if ($user->login()) {
+        $worker->id = $row['id'];
+        $worker->hash =  $hash;
+        $worker->rol = $row['rol'];
+        $worker->ip=$_SERVER['REMOTE_ADDR'];
+        if ($worker->login()) {
             // установим код ответа - 201 создано
             http_response_code(201);
 
@@ -59,8 +59,8 @@ while ($row = mysqli_fetch_assoc($q)){
             // Ставим куки
             setcookie("id", $row['id'], time() + 60 * 60 * 24 * 30, "/");
             setcookie("hash", $hash, time() + 60 * 60 * 24 * 30, "/");
-            // if($user->rol == 'admin') {
-            //     setcookie("rol", $user->rol, time() + 60 * 60 * 24 * 30, "/");
+            // if($worker->rol == 'admin') {
+            //     setcookie("rol", $worker->rol, time() + 60 * 60 * 24 * 30, "/");
             // }
            
             // Переадресовываем браузер на страницу проверки нашего скрипта

@@ -9,28 +9,28 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 // подключим файл для соединения с базой и объектом Product
 include_once "../config/database.php";
-include_once "../objects/user.php";
+include_once "../objects/worker.php";
 
 // получаем соединение с БД
 $database = new Database();
 $db = $database->getConnection();
 
 // подготовка объекта
-$user = new User($db);
+$worker = new Worker($db);
 
 // получаем id товара
 $data = json_decode(file_get_contents("php://input"));
 
 // установим id товара для удаления
-$user->id = $data->id;
+$worker->id = $data->id;
 
 // удаление товара
-if ($user->delete()) {
+if ($worker->delete()) {
     // код ответа - 200 ok
     http_response_code(200);
 
     // сообщение пользователю
-    echo json_encode(array("message" => "Пользователь был удалён"), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array("message" => "Работник был удалён"), JSON_UNESCAPED_UNICODE);
 }
 // если не удается удалить товар
 else {
@@ -38,5 +38,5 @@ else {
     http_response_code(503);
 
     // сообщим об этом пользователю
-    echo json_encode(array("message" => "Не удалось удалить пользователя"));
+    echo json_encode(array("message" => "Не удалось удалить работника"));
 }

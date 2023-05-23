@@ -6,15 +6,15 @@ header('Access-Control-Allow-Credentials: true');
 include_once "../config/database.php";
 
 // создание объекта товара
-include_once "../objects/user.php";
+include_once "../objects/worker.php";
 $database = new Database();
 $db = $database->getConnection();
-$user = new User($db);
+$worker = new Worker($db);
 
-$user->id = $_COOKIE["id"];
+$worker->id = $_COOKIE["id"];
 
-if($user->id != ''){
-    if ($user->logout()) {
+if($worker->id != ''){
+    if ($worker->logout()) {
         // установим код ответа - 201 создано
         http_response_code(201);
 

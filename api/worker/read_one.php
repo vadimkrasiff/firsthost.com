@@ -9,35 +9,35 @@ header("Content-Type: application/json");
 
 // подключение файла для соединения с базой и файл с объектом
 include_once "../config/database.php";
-include_once "../objects/user.php";
+include_once "../objects/worker.php";
 
 // получаем соединение с базой данных
 $database = new Database();
 $db = $database->getConnection();
 
 // подготовка объекта
-$user = new User($db);
+$worker = new Worker($db);
 
 // установим свойство ID записи для чтения
-$user->id = isset($_GET["id"]) ? $_GET["id"] : die();
+$worker->id = isset($_GET["id"]) ? $_GET["id"] : die();
 
 // получим детали товара
-$user->readOne();
+$worker->readOne();
 
-if ($user->fio != null) {
+if ($worker->fio != null) {
 
     // создание массива
-    $user_arr = array(
-        "id" =>  $user->id,
-        "fio" => $user->fio,
-        "num_phone" => $user->num_phone,
+    $worker_arr = array(
+        "id" =>  $worker->id,
+        "fio" => $worker->fio,
+        "num_phone" => $worker->num_phone,
     );
 
     // код ответа - 200 OK
     http_response_code(200);
 
     // вывод в формате json
-    echo json_encode($user_arr);
+    echo json_encode($worker_arr);
 } else {
     // код ответа - 404 Не найдено
     http_response_code(404);

@@ -11,21 +11,21 @@ header('Access-Control-Allow-Credentials: true');
 include_once "../config/database.php";
 
 // создание объекта товара
-include_once "../objects/user.php";
+include_once "../objects/worker.php";
 $database = new Database();
 $db = $database->getConnection();
-$user = new User($db);
+$worker = new Worker($db);
 
 
 
 
 if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
-    $user->id = $_COOKIE["id"];
+    $worker->id = $_COOKIE["id"];
 
-    $user->check();
+    $worker->check();
 
-    if (($user->hash !== $_COOKIE['hash']) or ($user->id !== $_COOKIE['id'])
-        or (($user->ip !== $_SERVER['REMOTE_ADDR'])  and ($user->ip !== "0"))
+    if (($worker->hash !== $_COOKIE['hash']) or ($worker->id !== $_COOKIE['id'])
+        or (($worker->ip !== $_SERVER['REMOTE_ADDR'])  and ($worker->ip !== "0"))
     ) {
         setcookie("id", "", time() - 3600 * 24 * 30 * 12, "/");
         setcookie("hash", "", time() - 3600 * 24 * 30 * 12, "/"); // httponly !!!
@@ -33,7 +33,7 @@ if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
         echo json_encode(array('response' => 0 ,"message" => "Not logged in"), JSON_UNESCAPED_UNICODE);
     } else {
         http_response_code(201);
-        echo json_encode(array( 'response' => 1, 'data' => array('id'=> $user->id, 'login'=> $user->login, 'rol'=> $user->rol)), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array( 'response' => 1, 'data' => array('id'=> $worker->id, 'login'=> $worker->login, 'rol'=> $worker->rol, "address" => "г. " . $worker->city . ", ул. " . $worker->street . ", " .$worker->num_house)), JSON_UNESCAPED_UNICODE);
     }
 } else {
     // http_response_code(503);
