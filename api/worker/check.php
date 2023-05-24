@@ -10,7 +10,7 @@ if ($http_origin == "https://apteka-omega.vercel.app" || $http_origin == "http:/
 // header("Access-Control-Allow-Origin:  https://apteka-omega.vercel.app");
 // header("Access-Control-Allow-Origin:  http://localhost:3000,");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET");
+header("Access-Control-Allow-Methods: POST");
 // header("Access-Control-Max-Age: 3600");
 // header("Access-Control-Allow-Headers:  Access-Control-Allow-Headers, X-Requested-With");
 header('Access-Control-Allow-Credentials: true');
@@ -24,15 +24,15 @@ $database = new Database();
 $db = $database->getConnection();
 $worker = new Worker($db);
 
+$post = json_decode(file_get_contents("php://input"));
 
 
-
-if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
-    $worker->id = $_COOKIE["id"];
+if (isset($post->id) and isset($post->hash)) {
+    $worker->id = $post->id;
 
     $worker->check();
 
-    if (($worker->hash !== $_COOKIE['hash']) or ($worker->id !== $_COOKIE['id'])
+    if (($worker->hash !== $post->hash) or ($worker->id !== $post->id)
         or (($worker->ip !== $_SERVER['REMOTE_ADDR'])  and ($worker->ip !== "0"))
     ) {
         setcookie("id", "", time() - 3600 * 24 * 30 * 12, "/");
@@ -45,5 +45,5 @@ if (isset($_COOKIE['id']) and isset($_COOKIE['hash'])) {
     }
 } else {
     // http_response_code(503);
-    echo json_encode(array('response' => 0 ,"message" => "Not logged in2 " . $_COOKIE['id']), JSON_UNESCAPED_UNICODE);
+    echo json_encode(array('response' => 0 ,"message" => "Not logged in2 " ), JSON_UNESCAPED_UNICODE);
 }
