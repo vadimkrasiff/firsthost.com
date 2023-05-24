@@ -1,7 +1,11 @@
 <?php
 
-// необходимые HTTP-заголовки
-header("Access-Control-Allow-Origin: *");
+$http_origin = $_SERVER['HTTP_ORIGIN'];
+
+if ($http_origin == "https://apteka-omega.vercel.app" || $http_origin == "http://localhost:3000" )
+{  
+    header("Access-Control-Allow-Origin: $http_origin");
+}
 header("Access-Control-Allow-Headers: access");
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Credentials: true");

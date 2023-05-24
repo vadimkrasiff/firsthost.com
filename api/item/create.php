@@ -1,7 +1,11 @@
 <?php
 
-// необходимые HTTP-заголовки
-header("Access-Control-Allow-Origin: http://localhost:3000");
+$http_origin = $_SERVER['HTTP_ORIGIN'];
+
+if ($http_origin == "https://apteka-omega.vercel.app" || $http_origin == "http://localhost:3000" )
+{  
+    header("Access-Control-Allow-Origin: $http_origin");
+}
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
