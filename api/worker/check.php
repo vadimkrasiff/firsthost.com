@@ -27,7 +27,7 @@ $worker = new Worker($db);
 $post = json_decode(file_get_contents("php://input"));
 
 
-if (isset($post->id) and isset($post->hash)) {
+if ($post->id and $post->hash) {
     $worker->id = $post->id;
 
     $worker->check();

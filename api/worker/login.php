@@ -58,11 +58,11 @@ while ($row = mysqli_fetch_assoc($q)){
             http_response_code(201);
 
             // сообщим пользователю
-            echo json_encode(array("response" => 1), JSON_UNESCAPED_UNICODE);
+            echo json_encode(array("response" => 1, 'id' => $row['id'], 'hash'=> $hash), JSON_UNESCAPED_UNICODE);
 
             // Ставим куки
-            setcookie("id", $row['id'], time() + 60 * 60 * 24 * 30, "/", );
-            setcookie("hash", $hash, time() + 60 * 60 * 24 * 30, "/");
+            // setcookie("id", $row['id'], time() + 60 * 60 * 24 * 30, "/", );
+            // setcookie("hash", $hash, time() + 60 * 60 * 24 * 30, "/");
             // if($worker->rol == 'admin') {
             //     setcookie("rol", $worker->rol, time() + 60 * 60 * 24 * 30, "/");
             // }

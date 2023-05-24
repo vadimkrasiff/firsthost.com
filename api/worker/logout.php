@@ -16,7 +16,7 @@ $database = new Database();
 $db = $database->getConnection();
 $worker = new Worker($db);
 
-$worker->id = $_COOKIE["id"];
+$worker->id = $_GET["id"];
 
 if($worker->id != ''){
     if ($worker->logout()) {
@@ -25,20 +25,17 @@ if($worker->id != ''){
 
         // сообщим пользователю
         echo json_encode(array("response" => 1), JSON_UNESCAPED_UNICODE);
-        setcookie("id", "", time() - 3600*24*30*12, "/");
-        setcookie("hash", "", time() - 3600*24*30*12, "/");
-        setcookie("rol", "", time() - 3600*24*30*12, "/");
     }
     // если не удается создать товар, сообщим пользователю
     else {
         // установим код ответа - 503 сервис недоступен
-        http_response_code(503);
+        // http_response_code(503);
 
         // сообщим пользователю
         echo json_encode(array("response" => 0,"message" => "Some error"), JSON_UNESCAPED_UNICODE);
     };
 } else {
-    http_response_code(503);
+    // http_response_code(503);
 
         // сообщим пользователю
         echo json_encode(array("response" => 0,"message" => "Some error"), JSON_UNESCAPED_UNICODE);
