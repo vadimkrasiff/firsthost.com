@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Май 23 2023 г., 20:08
+-- Время создания: Май 25 2023 г., 08:31
 -- Версия сервера: 5.7.39-log
 -- Версия PHP: 8.1.9
 
@@ -123,7 +123,8 @@ CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `date_create` datetime DEFAULT CURRENT_TIMESTAMP,
-  `pharmacy_id` int(11) DEFAULT NULL
+  `pharmacy_id` int(11) DEFAULT NULL,
+  `sum` float DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -189,6 +190,20 @@ INSERT INTO `storage` (`id`, `item_id`, `pharmacy_id`, `count`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `sub_order`
+--
+
+CREATE TABLE `sub_order` (
+  `id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `order_id` int(11) DEFAULT NULL,
+  `count` int(11) NOT NULL,
+  `sum` float DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `users_cpoy`
 --
 
@@ -236,8 +251,8 @@ CREATE TABLE `worker` (
 --
 
 INSERT INTO `worker` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `num_phone`, `image`, `rol`, `pharmacy_id`) VALUES
-(4, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', '6e48bff09a1f623c8e70eabbfe6e1394', 2130706433, 'dsda', '233232', NULL, 'admin', 1),
-(7, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '', 0, 'Vadim', '123323', NULL, 'worker', 2);
+(4, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', '929dfef4255d228509b12f471eff646f', 2130706433, 'dsda', '233232', NULL, 'admin', 1),
+(7, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '3b221f23659e62c672acd12f8f31a6a5', 2130706433, 'Vadim', '123323', NULL, 'worker', 2);
 
 --
 -- Индексы сохранённых таблиц
@@ -277,6 +292,14 @@ ALTER TABLE `storage`
   ADD PRIMARY KEY (`id`),
   ADD KEY `storage_ibfk_2` (`pharmacy_id`),
   ADD KEY `item_id` (`item_id`) USING BTREE;
+
+--
+-- Индексы таблицы `sub_order`
+--
+ALTER TABLE `sub_order`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `item_id` (`item_id`),
+  ADD KEY `order_id` (`order_id`);
 
 --
 -- Индексы таблицы `users_cpoy`
@@ -326,6 +349,12 @@ ALTER TABLE `storage`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
+-- AUTO_INCREMENT для таблицы `sub_order`
+--
+ALTER TABLE `sub_order`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT для таблицы `users_cpoy`
 --
 ALTER TABLE `users_cpoy`
@@ -359,6 +388,13 @@ ALTER TABLE `orders`
 ALTER TABLE `storage`
   ADD CONSTRAINT `storage_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`),
   ADD CONSTRAINT `storage_ibfk_2` FOREIGN KEY (`pharmacy_id`) REFERENCES `pharmacy` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `sub_order`
+--
+ALTER TABLE `sub_order`
+  ADD CONSTRAINT `sub_order_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`),
+  ADD CONSTRAINT `sub_order_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

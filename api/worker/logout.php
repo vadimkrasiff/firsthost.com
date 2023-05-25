@@ -25,6 +25,7 @@ if($worker->id != ''){
 
         // сообщим пользователю
         echo json_encode(array("response" => 1), JSON_UNESCAPED_UNICODE);
+        setcookie("id", "", time() - 3600*24*30*12, "/");
     }
     // если не удается создать товар, сообщим пользователю
     else {
