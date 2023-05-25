@@ -1,11 +1,13 @@
 <?php
 
-$http_origin = $_SERVER['HTTP_ORIGIN'];
+// if (isset($_SERVER['HTTP_ORIGIN']) !== null){
+// $http_origin = $_SERVER['HTTP_ORIGIN'];
 
-if ($http_origin == "https://apteka-omega.vercel.app" || $http_origin == "http://localhost:3000" )
-{  
-    header("Access-Control-Allow-Origin: $http_origin");
-}
+// if ($http_origin == "https://apteka-omega.vercel.app" || $http_origin == "http://localhost:3000" )
+// {  
+//     header("Access-Control-Allow-Origin: $http_origin");
+// }} else
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Max-Age: 3600");
