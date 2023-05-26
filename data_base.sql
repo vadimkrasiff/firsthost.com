@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Май 25 2023 г., 08:31
+-- Время создания: Май 26 2023 г., 17:00
 -- Версия сервера: 5.7.39-log
 -- Версия PHP: 8.1.9
 
@@ -121,11 +121,28 @@ DELIMITER ;
 
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
+  `worker_id` int(11) DEFAULT NULL,
   `date_create` datetime DEFAULT CURRENT_TIMESTAMP,
-  `pharmacy_id` int(11) DEFAULT NULL,
   `sum` float DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `orders`
+--
+
+INSERT INTO `orders` (`id`, `worker_id`, `date_create`, `sum`) VALUES
+(1, 1, '2023-05-25 17:41:25', 2200),
+(14, 1, '2023-05-26 16:55:04', 120),
+(15, 1, '2023-05-26 16:57:42', 1180);
+
+--
+-- Триггеры `orders`
+--
+DELIMITER $$
+CREATE TRIGGER `delete_orders` BEFORE DELETE ON `orders` FOR EACH ROW DELETE from sub_order
+WHERE order_id = old.id
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -166,9 +183,9 @@ CREATE TABLE `storage` (
 --
 
 INSERT INTO `storage` (`id`, `item_id`, `pharmacy_id`, `count`) VALUES
-(5, 8, 1, 100),
+(5, 8, 1, 99),
 (6, 8, 2, 100),
-(7, 9, 1, 100),
+(7, 9, 1, 85),
 (8, 9, 2, 100),
 (9, 12, 1, 100),
 (10, 12, 2, 100),
@@ -178,11 +195,11 @@ INSERT INTO `storage` (`id`, `item_id`, `pharmacy_id`, `count`) VALUES
 (14, 1, 2, 100),
 (15, 10, 1, 100),
 (16, 10, 2, 100),
-(17, 7, 1, 100),
+(17, 7, 1, 94),
 (18, 7, 2, 100),
-(19, 6, 1, 100),
+(19, 6, 1, 98),
 (20, 6, 2, 100),
-(21, 13, 1, 100),
+(21, 13, 1, 99),
 (22, 13, 2, 100),
 (23, 14, 1, 100),
 (24, 14, 2, 100);
@@ -198,8 +215,36 @@ CREATE TABLE `sub_order` (
   `item_id` int(11) NOT NULL,
   `order_id` int(11) DEFAULT NULL,
   `count` int(11) NOT NULL,
-  `sum` float DEFAULT '0'
+  `sum` float DEFAULT '0',
+  `pharmacy_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `sub_order`
+--
+
+INSERT INTO `sub_order` (`id`, `item_id`, `order_id`, `count`, `sum`, `pharmacy_id`) VALUES
+(2, 8, 1, 2, 1000, 1),
+(3, 9, 1, 10, 1200, 1),
+(8, 9, 14, 1, 120, 1),
+(9, 7, 15, 5, 700, 1),
+(10, 9, 15, 4, 480, 1);
+
+--
+-- Триггеры `sub_order`
+--
+DELIMITER $$
+CREATE TRIGGER `insert_sub_order` BEFORE INSERT ON `sub_order` FOR EACH ROW BEGIN
+UPDATE orders
+set sum = sum + new.sum
+where id = new.order_id;
+UPDATE storage
+set count= count - new.count
+WHERE pharmacy_id = new.pharmacy_id AND
+item_id = new.item_id;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -234,7 +279,34 @@ INSERT INTO `users_cpoy` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `
 --
 
 CREATE TABLE `worker` (
-  `id` int(11) UNSIGNED NOT NULL,
+  `id` int(11) NOT NULL,
+  `login` varchar(30) NOT NULL,
+  `password` varchar(32) NOT NULL,
+  `user_hash` varchar(32) NOT NULL DEFAULT '',
+  `ip` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `fio` varchar(50) NOT NULL,
+  `num_phone` varchar(50) DEFAULT NULL,
+  `image` text,
+  `rol` varchar(10) DEFAULT 'worker',
+  `pharmacy_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `worker`
+--
+
+INSERT INTO `worker` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `num_phone`, `image`, `rol`, `pharmacy_id`) VALUES
+(1, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', 'b9cad2d9be87b52c04f120384623dd1b', 2130706433, 'Красильников В. И.', '89504677438', NULL, 'admin', 1),
+(2, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '', 0, 'Красильников В. И.', '89504677438', NULL, 'worker', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `worker1`
+--
+
+CREATE TABLE `worker1` (
+  `id` int(11) NOT NULL,
   `login` varchar(30) NOT NULL,
   `password` varchar(32) NOT NULL,
   `user_hash` varchar(32) NOT NULL DEFAULT '',
@@ -247,12 +319,12 @@ CREATE TABLE `worker` (
 ) ENGINE=MyISAM DEFAULT CHARSET=cp1251;
 
 --
--- Дамп данных таблицы `worker`
+-- Дамп данных таблицы `worker1`
 --
 
-INSERT INTO `worker` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `num_phone`, `image`, `rol`, `pharmacy_id`) VALUES
-(4, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', '929dfef4255d228509b12f471eff646f', 2130706433, 'dsda', '233232', NULL, 'admin', 1),
-(7, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '3b221f23659e62c672acd12f8f31a6a5', 2130706433, 'Vadim', '123323', NULL, 'worker', 2);
+INSERT INTO `worker1` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `num_phone`, `image`, `rol`, `pharmacy_id`) VALUES
+(1, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', '929dfef4255d228509b12f471eff646f', 2130706433, 'dsda', '233232', NULL, 'admin', 1),
+(2, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '3b221f23659e62c672acd12f8f31a6a5', 2130706433, 'Vadim', '123323', NULL, 'worker', 2);
 
 --
 -- Индексы сохранённых таблиц
@@ -269,15 +341,14 @@ ALTER TABLE `categories`
 --
 ALTER TABLE `items`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `category_id` (`category_id`);
+  ADD KEY `items_ibfk_1` (`category_id`);
 
 --
 -- Индексы таблицы `orders`
 --
 ALTER TABLE `orders`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `pharmacy_id` (`pharmacy_id`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `user_id` (`worker_id`);
 
 --
 -- Индексы таблицы `pharmacy`
@@ -298,8 +369,9 @@ ALTER TABLE `storage`
 --
 ALTER TABLE `sub_order`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `item_id` (`item_id`),
-  ADD KEY `order_id` (`order_id`);
+  ADD KEY `sub_order_ibfk_1` (`item_id`),
+  ADD KEY `sub_order_ibfk_2` (`order_id`),
+  ADD KEY `pharmacy_id` (`pharmacy_id`);
 
 --
 -- Индексы таблицы `users_cpoy`
@@ -311,6 +383,13 @@ ALTER TABLE `users_cpoy`
 -- Индексы таблицы `worker`
 --
 ALTER TABLE `worker`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pharmacy_id` (`pharmacy_id`);
+
+--
+-- Индексы таблицы `worker1`
+--
+ALTER TABLE `worker1`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pharmacy_id` (`pharmacy_id`);
 
@@ -334,7 +413,7 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT для таблицы `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT для таблицы `pharmacy`
@@ -352,7 +431,7 @@ ALTER TABLE `storage`
 -- AUTO_INCREMENT для таблицы `sub_order`
 --
 ALTER TABLE `sub_order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT для таблицы `users_cpoy`
@@ -364,7 +443,13 @@ ALTER TABLE `users_cpoy`
 -- AUTO_INCREMENT для таблицы `worker`
 --
 ALTER TABLE `worker`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT для таблицы `worker1`
+--
+ALTER TABLE `worker1`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -374,27 +459,34 @@ ALTER TABLE `worker`
 -- Ограничения внешнего ключа таблицы `items`
 --
 ALTER TABLE `items`
-  ADD CONSTRAINT `items_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
+  ADD CONSTRAINT `items_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `orders`
 --
 ALTER TABLE `orders`
-  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`pharmacy_id`) REFERENCES `pharmacy` (`id`);
+  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`worker_id`) REFERENCES `worker` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `storage`
 --
 ALTER TABLE `storage`
-  ADD CONSTRAINT `storage_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`),
+  ADD CONSTRAINT `storage_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `storage_ibfk_2` FOREIGN KEY (`pharmacy_id`) REFERENCES `pharmacy` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `sub_order`
 --
 ALTER TABLE `sub_order`
-  ADD CONSTRAINT `sub_order_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`),
-  ADD CONSTRAINT `sub_order_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`);
+  ADD CONSTRAINT `sub_order_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `sub_order_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `sub_order_ibfk_3` FOREIGN KEY (`pharmacy_id`) REFERENCES `pharmacy` (`id`);
+
+--
+-- Ограничения внешнего ключа таблицы `worker`
+--
+ALTER TABLE `worker`
+  ADD CONSTRAINT `worker_ibfk_1` FOREIGN KEY (`pharmacy_id`) REFERENCES `pharmacy` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

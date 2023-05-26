@@ -51,14 +51,16 @@ function create_order() {
     " . $this->table_name . "
 SET
     worker_id=?;
-    SELECT id FROM `orders` ORDER by id DESC LIMIT 1;";
+    ";
     $stmt = $this->conn->prepare($query);
 
     $stmt->bindParam(1, $this->worker_id);
 
     // выполняем запрос
     $stmt->execute();
-    return $stmt;
+    $res = $stmt;
+    $stmt->closeCursor();
+    return $res; 
 }
 
 function create_sub_order() {
@@ -75,7 +77,10 @@ item_id=:item_id, order_id=:order_id, count=:count, sum=:sum, pharmacy_id=:pharm
 
     // выполняем запрос
     $stmt->execute();
+    
     return $stmt;
+
+
 }
 
 }

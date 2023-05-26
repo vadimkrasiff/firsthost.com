@@ -21,29 +21,33 @@ $db = $database->getConnection();
 $order = new Order($db);
 
 // получаем отправленные данные
-$data = json_decode(file_get_contents("php://input"));
+$post = json_decode(file_get_contents("php://input"));
 
 // убеждаемся, что данные не пусты
 if (
-    !empty($data->worker_id) &&
-    !empty($data->order)
+    !empty($post->worker_id) &&
+    !empty($post->data)
 ) {
     // устанавливаем значения свойств товара
-    $order->worker_id = $data->worker_id;
+    $order->worker_id = $post->worker_id;
 
     
     // создание товара
     $order->create_order();
-        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // извлекаем строку
-            extract($row);
-            $order->id = $id;
-        };
-        foreach ($data->orders as $data) {
+
+    $link = mysqli_connect("localhost", "root", "", "data_base");
+    $get_item = mysqli_query($link, "SELECT id FROM `orders` ORDER by id DESC LIMIT 1;");
+    if ($row1 = mysqli_fetch_assoc($get_item)) {
+        $order->id = $row1['id']; 
+    }
+        foreach ($post->data as $data) {
             $order->item_id = $data->item_id;
             $order->count = $data->count;
             $order->sum = $data->sum;
             $order->pharmacy_id = $data->pharmacy_id;
+
+            $order->create_sub_order();
+            
         }
 
         // установим код ответа - 201 создано
