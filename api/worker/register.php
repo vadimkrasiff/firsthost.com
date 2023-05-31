@@ -20,7 +20,7 @@ include_once "../objects/worker.php";
 $database = new Database();
 $db = $database->getConnection();
 $worker = new Worker($db);
-$link=mysqli_connect("localhost", "root", "", "data_base");
+$link=mysqli_connect("localhost", "worker", "ewfL[o7Zad.kgS]2", "data_base");
 
 // получаем отправленные данные
 $data = json_decode(file_get_contents("php://input"));

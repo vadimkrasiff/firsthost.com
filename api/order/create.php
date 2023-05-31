@@ -35,7 +35,7 @@ if (
     // создание товара
     $order->create_order();
 
-    $link = mysqli_connect("localhost", "root", "", "data_base");
+    $link = mysqli_connect("localhost", "worker", "ewfL[o7Zad.kgS]2", "data_base");
     $get_item = mysqli_query($link, "SELECT id FROM `orders` ORDER by id DESC LIMIT 1;");
     if ($row1 = mysqli_fetch_assoc($get_item)) {
         $order->id = $row1['id']; 
@@ -43,7 +43,7 @@ if (
         foreach ($post->data as $data) {
             $order->item_id = $data->item_id;
             $order->count = $data->count;
-            $order->sum = $data->sum;
+            $order->sub_sum = $data->sum;
             $order->pharmacy_id = $data->pharmacy_id;
 
             $order->create_sub_order();

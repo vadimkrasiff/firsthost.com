@@ -19,7 +19,7 @@ include_once "../objects/worker.php";
 $database = new Database();
 $db = $database->getConnection();
 $worker = new Worker($db);
-$link = mysqli_connect("localhost", "root", "", "data_base");
+$link = mysqli_connect("localhost", "worker", "ewfL[o7Zad.kgS]2", "data_base");
 
 // Функция для генерации случайной строки
 function generateCode($length = 6)
@@ -39,7 +39,7 @@ $post = json_decode(file_get_contents("php://input"));
 
 
 // Вытаскиваем из БД запись, у которой логин равняеться введенному
-$mysqli = mysqli_connect("localhost", "root", "", "data_base");
+$mysqli = mysqli_connect("localhost", "worker", "ewfL[o7Zad.kgS]2", "data_base");
 $q = mysqli_query($mysqli, "SELECT `id`, `password`, `rol` FROM worker WHERE `login`='" . mysqli_real_escape_string($link, $post->login) . "' LIMIT 1");
 
 

@@ -5,8 +5,8 @@ class Database
     // укажите свои учетные данные базы данных
     private $host = "localhost";
     private $db_name = "data_base";
-    private $username = "root";
-    private $password = "";
+    private $username = "worker";
+    private $password = "ewfL[o7Zad.kgS]2";
     public $conn;
 
     // получаем соединение с БД

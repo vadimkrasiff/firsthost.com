@@ -46,7 +46,7 @@ if (
     if ($item->create()) {
         $item_id = null;
         $pharmacy_id = null;
-        $link = mysqli_connect("localhost", "root", "", "data_base");
+        $link = mysqli_connect("localhost", "worker", "ewfL[o7Zad.kgS]2", "data_base");
         $get_item = mysqli_query($link, "(SELECT `id` FROM items ORDER BY 1 DESC LIMIT 1 )
         UNION
         (SELECT id FROM pharmacy ORDER BY 1 DESC LIMIT 1)");

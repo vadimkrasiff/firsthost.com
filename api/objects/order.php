@@ -72,7 +72,7 @@ item_id=:item_id, order_id=:order_id, count=:count, sum=:sum, pharmacy_id=:pharm
     $stmt->bindParam(":item_id", $this->item_id);
     $stmt->bindParam(":order_id", $this->id);
     $stmt->bindParam(":count", $this->count);
-    $stmt->bindParam(":sum", $this->sum);
+    $stmt->bindParam(":sum", $this->sub_sum);
     $stmt->bindParam(":pharmacy_id", $this->pharmacy_id);
 
     // выполняем запрос
