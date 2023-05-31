@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Май 28 2023 г., 00:59
+-- Время создания: Май 31 2023 г., 18:58
 -- Версия сервера: 5.7.39
 -- Версия PHP: 7.2.34
 
@@ -20,20 +20,6 @@ SET time_zone = "+00:00";
 --
 -- База данных: `data_base`
 --
-
-DELIMITER $$
---
--- Процедуры
---
-CREATE DEFINER=`root`@`%` PROCEDURE `my_now` ()   BEGIN
-  DECLARE i INT DEFAULT 3;
-  WHILE i > 0 DO
-	SELECT NOW();
-	SET i = i - 1;
-  END WHILE;
-END$$
-
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -58,16 +44,6 @@ INSERT INTO `categories` (`id`, `name`, `description`, `created`, `modified`) VA
 (3, 'Противомикробные препараты', 'Лекарственные средства природного или полусинтетического происхождения, подавляющие рост и развитие или вызывающие гибель различных видов бактерий, хламидий, грибов, простейших, вирусов и т.д.', '2023-05-18 17:13:45', '2023-05-18 14:19:49'),
 (4, 'Антибиотики', 'Органические вещества, образуемые микробами и другими более высокоразвитыми растительными веществами и организмами, обладающие способностью угнетать или убивать микробы. Получают антибиотики из культурной жидкости, в которой находятся образующие их микроорганизмы, а также синтетическим путем. Антибиотики понижают жизнеспособность микробов, нарушая у них обмен веществ.', '2023-05-18 17:13:45', '2023-05-18 14:19:49'),
 (5, 'Анальгетики', 'Лекарственные препараты, которые избирательно подавляют болевые ощущения. Они способны временно снять не только боль, но и жар, мышечное напряжение. Причем, анальгетики не воздействуют на причину недомогания, а лишь облегчают состояние человека, если боль нестерпима или нарушает его жизненный ритм. Различают наркотические и ненаркотические анальгетики', '2023-05-18 17:13:45', '2023-05-18 14:19:49');
-
---
--- Триггеры `categories`
---
-DELIMITER $$
-CREATE TRIGGER `delete_category` BEFORE DELETE ON `categories` FOR EACH ROW BEGIN
-	DELETE FROM items WHERE category_id=old.id; 
-end
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -103,16 +79,6 @@ INSERT INTO `items` (`id`, `category_id`, `name`, `description`, `cost`, `create
 (13, 2, 'Гель для рук с антибактериальными компонентами 96 мл Spring', 'Гель для рук гигиенический с антибактериальными компонентами со смягчающим эффектом. Незаменимое средство для очистки рук при отсутствии воды: в транспорте, магазинах, учебных заведениях, спортзалах, предприятиях общепита, путешествиях, после контакта с животными.', 75, '2023-05-21 23:23:53', '2023-05-21 20:23:53', 'http://localhost/image/items/IMG2023-05-27_21-47-16_PM.jpg', 'СПРИНГ ГРУП'),
 (14, 2, 'Средство дезинфицирующее (кожный антисептик) Перекись водорода 3 % 100 мл', 'Средство дезинфицирующее (кожный антисептик) «Перекись водорода 3 %». Обладает бактерицидной, туберкулоцидной, вирулицидной, фунгицидной и спороцидной активностью.', 1000, '2023-05-22 17:12:47', '2023-05-22 14:12:47', 'http://localhost/image/items/IMG2023-05-27_21-32-45_PM.jpg', 'ЭКОСТЕКС');
 
---
--- Триггеры `items`
---
-DELIMITER $$
-CREATE TRIGGER `delete_item` BEFORE DELETE ON `items` FOR EACH ROW BEGIN
-	DELETE FROM storage WHERE item_id = old.id;
-END
-$$
-DELIMITER ;
-
 -- --------------------------------------------------------
 
 --
@@ -135,15 +101,6 @@ INSERT INTO `orders` (`id`, `worker_id`, `date_create`, `sum`) VALUES
 (14, 1, '2023-05-26 16:55:04', 120),
 (15, 1, '2023-05-26 16:57:42', 1180),
 (16, 1, '2023-05-28 00:58:10', 570);
-
---
--- Триггеры `orders`
---
-DELIMITER $$
-CREATE TRIGGER `delete_orders` BEFORE DELETE ON `orders` FOR EACH ROW DELETE from sub_order
-WHERE order_id = old.id
-$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -234,48 +191,6 @@ INSERT INTO `sub_order` (`id`, `item_id`, `order_id`, `count`, `sum`, `pharmacy_
 (12, 13, 16, 4, 300, 1),
 (13, 12, 16, 1, 150, 1);
 
---
--- Триггеры `sub_order`
---
-DELIMITER $$
-CREATE TRIGGER `insert_sub_order` BEFORE INSERT ON `sub_order` FOR EACH ROW BEGIN
-UPDATE orders
-set sum = sum + new.sum
-where id = new.order_id;
-UPDATE storage
-set count= count - new.count
-WHERE pharmacy_id = new.pharmacy_id AND
-item_id = new.item_id;
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `users_cpoy`
---
-
-CREATE TABLE `users_cpoy` (
-  `id` int(11) UNSIGNED NOT NULL,
-  `login` varchar(30) NOT NULL,
-  `password` varchar(32) NOT NULL,
-  `user_hash` varchar(32) NOT NULL DEFAULT '',
-  `ip` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `fio` varchar(50) NOT NULL,
-  `num_phone` varchar(50) DEFAULT NULL,
-  `image` text,
-  `rol` varchar(10) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251;
-
---
--- Дамп данных таблицы `users_cpoy`
---
-
-INSERT INTO `users_cpoy` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `num_phone`, `image`, `rol`) VALUES
-(4, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', '8ee9573ce4ab9bd401d2c77c72411f81', 2130706433, 'dsda', '233232', NULL, 'admin'),
-(7, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '', 0, 'Vadim', '123323', NULL, 'worker');
-
 -- --------------------------------------------------------
 
 --
@@ -302,33 +217,6 @@ CREATE TABLE `worker` (
 INSERT INTO `worker` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `num_phone`, `image`, `rol`, `pharmacy_id`) VALUES
 (1, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', '3044fa01ae511c7cd0a0fec83f700b26', 2130706433, 'Красильников В. И.', '89504677438', NULL, 'admin', 1),
 (2, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '', 0, 'Красильников В. И.', '89504677438', NULL, 'worker', 2);
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `worker1`
---
-
-CREATE TABLE `worker1` (
-  `id` int(11) NOT NULL,
-  `login` varchar(30) NOT NULL,
-  `password` varchar(32) NOT NULL,
-  `user_hash` varchar(32) NOT NULL DEFAULT '',
-  `ip` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `fio` varchar(50) NOT NULL,
-  `num_phone` varchar(50) DEFAULT NULL,
-  `image` text,
-  `rol` varchar(10) DEFAULT 'worker',
-  `pharmacy_id` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=cp1251;
-
---
--- Дамп данных таблицы `worker1`
---
-
-INSERT INTO `worker1` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `num_phone`, `image`, `rol`, `pharmacy_id`) VALUES
-(1, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', '929dfef4255d228509b12f471eff646f', 2130706433, 'dsda', '233232', NULL, 'admin', 1),
-(2, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '3b221f23659e62c672acd12f8f31a6a5', 2130706433, 'Vadim', '123323', NULL, 'worker', 2);
 
 --
 -- Индексы сохранённых таблиц
@@ -378,22 +266,9 @@ ALTER TABLE `sub_order`
   ADD KEY `pharmacy_id` (`pharmacy_id`);
 
 --
--- Индексы таблицы `users_cpoy`
---
-ALTER TABLE `users_cpoy`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Индексы таблицы `worker`
 --
 ALTER TABLE `worker`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `pharmacy_id` (`pharmacy_id`);
-
---
--- Индексы таблицы `worker1`
---
-ALTER TABLE `worker1`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pharmacy_id` (`pharmacy_id`);
 
@@ -438,21 +313,9 @@ ALTER TABLE `sub_order`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT для таблицы `users_cpoy`
---
-ALTER TABLE `users_cpoy`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
 -- AUTO_INCREMENT для таблицы `worker`
 --
 ALTER TABLE `worker`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT для таблицы `worker1`
---
-ALTER TABLE `worker1`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
