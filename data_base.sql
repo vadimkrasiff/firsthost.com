@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Май 31 2023 г., 18:58
+-- Время создания: Июн 03 2023 г., 13:15
 -- Версия сервера: 5.7.39
 -- Версия PHP: 7.2.34
 
@@ -21,6 +21,20 @@ SET time_zone = "+00:00";
 -- База данных: `data_base`
 --
 
+DELIMITER $$
+--
+-- Процедуры
+--
+CREATE DEFINER=`root`@`%` PROCEDURE `my_now` ()   BEGIN
+  DECLARE i INT DEFAULT 3;
+  WHILE i > 0 DO
+	SELECT NOW();
+	SET i = i - 1;
+  END WHILE;
+END$$
+
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -30,7 +44,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `name` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `description` text COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
   `created` datetime NOT NULL,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -55,11 +69,11 @@ CREATE TABLE `items` (
   `id` int(11) NOT NULL,
   `category_id` int(11) NOT NULL,
   `name` varchar(80) COLLATE utf8_unicode_ci NOT NULL,
-  `description` text COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(1500) COLLATE utf8_unicode_ci NOT NULL,
   `cost` float NOT NULL,
   `created` datetime NOT NULL,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `image` text COLLATE utf8_unicode_ci,
+  `image` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL,
   `manufacturer` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -145,7 +159,7 @@ INSERT INTO `storage` (`id`, `item_id`, `pharmacy_id`, `count`) VALUES
 (6, 8, 2, 100),
 (7, 9, 1, 84),
 (8, 9, 2, 100),
-(9, 12, 1, 99),
+(9, 12, 1, 96),
 (10, 12, 2, 100),
 (11, 11, 1, 100),
 (12, 11, 2, 100),
@@ -191,6 +205,24 @@ INSERT INTO `sub_order` (`id`, `item_id`, `order_id`, `count`, `sum`, `pharmacy_
 (12, 13, 16, 4, 300, 1),
 (13, 12, 16, 1, 150, 1);
 
+--
+-- Триггеры `sub_order`
+--
+DELIMITER $$
+CREATE TRIGGER `insert_sub_order` BEFORE INSERT ON `sub_order` FOR EACH ROW BEGIN
+
+UPDATE orders
+set sum = sum + new.sum
+where id = new.order_id;
+UPDATE storage
+set count= count - new.count
+WHERE pharmacy_id = new.pharmacy_id AND
+item_id = new.item_id;
+
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -205,7 +237,7 @@ CREATE TABLE `worker` (
   `ip` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `fio` varchar(50) NOT NULL,
   `num_phone` varchar(50) DEFAULT NULL,
-  `image` text,
+  `image` varchar(300) DEFAULT NULL,
   `rol` varchar(10) DEFAULT 'worker',
   `pharmacy_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -215,7 +247,7 @@ CREATE TABLE `worker` (
 --
 
 INSERT INTO `worker` (`id`, `login`, `password`, `user_hash`, `ip`, `fio`, `num_phone`, `image`, `rol`, `pharmacy_id`) VALUES
-(1, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', '3044fa01ae511c7cd0a0fec83f700b26', 2130706433, 'Красильников В. И.', '89504677438', NULL, 'admin', 1),
+(1, 'krasilkoff', '0773f7e5d21714681d9ff4394c6d4997', 'e6a4bf81e4765ccbc9055aac55a03f50', 2130706433, 'Красильников В. И.', '89504677438', NULL, 'admin', 1),
 (2, 'test', 'e08a7c49d96c2b475656cc8fe18cee8e', '', 0, 'Красильников В. И.', '89504677438', NULL, 'worker', 2);
 
 --
@@ -261,15 +293,16 @@ ALTER TABLE `storage`
 --
 ALTER TABLE `sub_order`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `sub_order_ibfk_1` (`item_id`),
-  ADD KEY `sub_order_ibfk_2` (`order_id`),
-  ADD KEY `pharmacy_id` (`pharmacy_id`);
+  ADD KEY `pharmacy_id` (`pharmacy_id`),
+  ADD KEY `order_id` (`order_id`) USING BTREE,
+  ADD KEY `item_id` (`item_id`) USING BTREE;
 
 --
 -- Индексы таблицы `worker`
 --
 ALTER TABLE `worker`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `login` (`login`),
   ADD KEY `pharmacy_id` (`pharmacy_id`);
 
 --
